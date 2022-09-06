@@ -33,14 +33,16 @@ This assignment consists on several questions as follows:
 
 At first we need two `dplyr` & `ggplot2` libraries ,so we have:
 
-```{r message = FALSE, warning = FALSE}
+
+```r
 library(dplyr)
 library(ggplot2)
 ```
 
 **Load the data.** In the case the data is already available in the working directory, it is loaded directly. On the other hand, it is first downloaded and unzipped.
 
-```{r}
+
+```r
 file_url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 zip_file <- ".\\activity.zip"
 
@@ -56,7 +58,8 @@ if (!file.exists(file_name)) {
 
 In order to have a more clean code we set these variables in a short way:
 
-```{r}
+
+```r
 ASPD <- "average_steps_per_date"
 ASPI <- "average_steps_per_interval"
 FMI <- "five_minute_interval"
@@ -65,7 +68,8 @@ ASPW <- "average_steps_per_weekday"
 
 **Process/transform the data (if necessary) into a format suitable for your analysis.** Since the date column is a date, it is transform from character type to date type.
 
-```{r}
+
+```r
 Data <- read.csv(file_name, header = TRUE)
 Data$date <- as.Date(Data$date, format = "%Y-%m-%d")
 ```
@@ -74,58 +78,77 @@ Data$date <- as.Date(Data$date, format = "%Y-%m-%d")
 
 **For this part of the assignment, you can ignore the missing values in the dataset.**
 
-```{r, warning = FALSE}
+
+```r
 ASPD <- Data %>% select(steps, date) %>% group_by(date) %>% summarise_all(funs(sum))
 ```
 
 **Make a histogram of the total number of steps taken each day.**
 
-```{r, warning = FALSE}
+
+```r
 ggplot(ASPD, aes(steps)) + 
         geom_histogram(bins = 25, color = "darkblue",
                        fill = "lightblue", alpha = 0.4) + 
         labs(title = "Steps histogram", x = "Number of steps", y = "Count")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
 
 **Calculate and report the mean and median total number of steps taken per day.**
 
 The mean total number of steps taken per day is:
 
-```{r}
+
+```r
 (meanData <- mean(ASPD$steps, na.rm = T))
+```
+
+```
+## [1] 10766.19
 ```
 
 The median total number of steps taken per day is:
 
-```{r}
+
+```r
 (medianData <- median(ASPD$steps, na.rm = T))
+```
+
+```
+## [1] 10765
 ```
 
 ### 3.What is the average daily activity pattern?
 
 **Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)**
 
-```{r, warning = FALSE}
+
+```r
 ASPI <- Data %>% select(steps, interval) %>% group_by(interval) %>%
         summarise_all(funs(mean), na.rm = T)
 ```
 
 **Histogram of the total number of steps taken each day**
 
-```{r, warning = FALSE}
+
+```r
 ggplot(ASPI, aes(interval, steps)) + geom_line() +
         labs(title = "The average daily activity pattern",
              x = "The 5-minute interval", y = "Average number of steps") + theme_classic()
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
 **Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?**
 
-```{r}
+
+```r
 FMI <- ASPI$interval[which.max(ASPI$steps)]
 ```
 
-The 5-minute interval rsulted is: `r FMI`
+The 5-minute interval rsulted is: 835
 
 ### Imputing missing values
 
@@ -133,21 +156,24 @@ Note that there are a number of days/intervals where there are missing values (c
 
 **Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)**
 
-```{r}
+
+```r
 Nas <- sum(is.na(Data$steps))
 ```
 
-The total number of missing values in the dataset is: `r Nas`
+The total number of missing values in the dataset is: 2304
 
 **Create a new dataset that is equal to the original dataset but with the missing data filled in.**
 
-```{r}
+
+```r
 FillnaData <- Data
 ```
 
 **The strategy selected for filling in all of the missing values in the dataset is the use of the mean for that 5-minute interval.**
 
-```{r}
+
+```r
 na_steps <- is.na(Data$steps)
 FillnaData$steps[na_steps] <- ASPI$steps[na_steps]
 
@@ -158,25 +184,38 @@ ASPD2 <- FillnaData %>% select(steps, date, interval) %>% group_by(date) %>%
 
 **Make a histogram of the total number of steps taken each day.**
 
-```{r, warning = FALSE}
+
+```r
 ggplot(ASPD2, aes(steps)) + 
         geom_histogram(bins = 25, color = "darkblue",
                        fill = "lightblue", alpha = 0.4) + 
         labs(title = "Steps histogram", x = "Number of steps", y = "Count")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+
 **Calculate and report the mean and median total number of steps taken per day.**
 
 The mean total number of steps taken per day is:
 
-```{r}
+
+```r
 (meanFillnaData <- mean(ASPD2$steps, na.rm = T))
+```
+
+```
+## [1] 10766.19
 ```
 
 The median total number of steps taken per day:
 
-```{r}
+
+```r
 (medianFillnaData <- median(ASPD2$steps, na.rm = T))
+```
+
+```
+## [1] 10765.59
 ```
 
 **Do these values differ from the estimates from the first part of the assignment?**
@@ -189,14 +228,26 @@ There are mire significant difference in the quartiles, with an increase in the 
 
 The summary of the original data set is:
 
-```{r}
+
+```r
 summary(ASPD$steps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##      41    8841   10765   10766   13294   21194       8
 ```
 
 The summary of the data set with missing values filled is:
 
-```{r}
+
+```r
 summary(ASPD2$steps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##      41    8860   10766   10766   13191   21194       7
 ```
 
 **Are there differences in activity patterns between weekdays and weekends?**
@@ -206,7 +257,8 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 **Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.**
 
-```{r}
+
+```r
 weekdays_values = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 
 date_type <- ifelse(weekdays(FillnaData$date) %in% weekdays_values,
@@ -217,7 +269,8 @@ FillnaData$day_type <- factor(date_type)
 
 Make a panel plot containing a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:
 
-```{r}
+
+```r
 ASPW <- aggregate(steps ~ interval + day_type, data = FillnaData
                   , FUN = mean, na.rm = T) 
 
@@ -227,3 +280,6 @@ ggplot(ASPW, aes(interval, steps, color = day_type)) +
         labs(title = "Activity pattern by the week of the day", 
              x = "The 5-minute interval", y = "Average number of steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+
