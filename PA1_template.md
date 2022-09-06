@@ -188,7 +188,7 @@ ASPD2 <- FillnaData %>% select(steps, date, interval) %>% group_by(date) %>%
 ```r
 ggplot(ASPD2, aes(steps)) + 
         geom_histogram(bins = 25, color = "darkblue",
-                       fill = "lightblue", alpha = 0.4) + 
+                       fill = "lightgreen", alpha = 0.4) + 
         labs(title = "Steps histogram", x = "Number of steps", y = "Count")
 ```
 
@@ -282,4 +282,3 @@ ggplot(ASPW, aes(interval, steps, color = day_type)) +
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
-
